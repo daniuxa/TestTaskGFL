@@ -1,5 +1,14 @@
-﻿@{
+﻿@model IEnumerable<Folder>
+@{
     ViewData["Title"] = "Home Page";
 }
-<p><b><a href="">Process</a></b></p>
-<p><b><a href="">Final Product</a></b></p>
+<h2>Root folders</h2>
+
+<ul>
+@foreach(var folder in Model)
+{
+    <li>
+        <p><b><a href="@Url.Action("FolderTree", "Home", new {folderId = folder.FolderId})">@folder.FolderName</a></b></p>
+    </li>
+}
+</ul>

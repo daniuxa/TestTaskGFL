@@ -15,6 +15,10 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\saliv\source\repos\TestTaskGFL\TestTaskGFL
 build_property._RazorSourceGeneratorDebug = 
 
+[C:/Users/saliv/source/repos/TestTaskGFL/TestTaskGFL/Views/Home/FolderTree.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxGb2xkZXJUcmVlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/saliv/source/repos/TestTaskGFL/TestTaskGFL/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

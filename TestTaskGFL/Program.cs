@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TestTaskGFL.Models.Contexts;
+using TestTaskGFL.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ builder.Services.AddDbContext<FoldersContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddScoped<IFolderService, FolderService>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
