@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Text;
+using TestTaskGFL.Bll.DTOs;
 using TestTaskGFL.Models;
 using TestTaskGFL.Models.Contexts;
 using TestTaskGFL.Services;
@@ -11,11 +14,13 @@ namespace TestTaskGFL.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IFolderService _folderService;
+        private readonly IMapper _mapper;
 
-        public HomeController(ILogger<HomeController> logger, IFolderService folderService)
+        public HomeController(ILogger<HomeController> logger, IFolderService folderService, IMapper mapper)
         {
             _logger = logger;
             _folderService = folderService;
+            _mapper = mapper;
         }
         [HttpGet]
         public async Task<IActionResult> IndexAsync()
@@ -59,6 +64,14 @@ namespace TestTaskGFL.Controllers
             await _folderService.SaveChangesAsync();
             return NoContent();
             //return Json(new { folders });
+        }
+        public async Task<IActionResult> ExportCatalogAsync(int? parentFolderId = null)
+        {
+            IEnumerable<Folder> folders = await _folderService.GetFoldersAsync(parentFolderId);
+            string json = JsonConvert.SerializeObject(_mapper.Map<IEnumerable<FolderDTO>>(folders), Formatting.Indented);
+            byte[] byteArray = Encoding.UTF8.GetBytes(json);
+
+            return File(byteArray, "application/json", "folders.json");
         }
     }
 }

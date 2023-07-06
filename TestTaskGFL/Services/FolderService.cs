@@ -34,6 +34,10 @@ namespace TestTaskGFL.Services
                     await _foldersContext.Folders.AddAsync(
                         new Folder { FolderId = item.FolderId, FolderName = item.FolderName, ParentFolderId = parentFolderId});
                 }
+                else
+                {
+                    await _foldersContext.Folders.AddAsync(item);
+                }
             }
             return;
         }
@@ -42,6 +46,33 @@ namespace TestTaskGFL.Services
         {
             Folder? folder = await _foldersContext.Folders.Include(x => x.ChildFolderes).Where(x => x.FolderId == folderId).FirstOrDefaultAsync();
             return folder;
+        }
+
+        public async Task<IEnumerable<Folder>> GetFoldersAsync(int? parentFolderId = null)
+        {
+            List<Folder> folders = new List<Folder>();
+            if (parentFolderId == null)
+            {
+                return await _foldersContext.Folders.ToListAsync();
+            }
+            Folder? parentFolder = await GetFolderByIdAsync((int)parentFolderId);
+            if (parentFolder == null)
+            {
+                return folders;
+            }
+            AddFoldersRecursive(parentFolder, folders);
+            return folders;
+        }
+        private void AddFoldersRecursive(Folder folder, List<Folder> folders)
+        {
+            folders.Add(folder);
+            _foldersContext.Entry(folder)
+                .Collection(f => f.ChildFolderes)
+                .Load();
+            foreach (var item in folder.ChildFolderes)
+            {
+                AddFoldersRecursive(item, folders);
+            }
         }
 
         public async Task<Folder?> GetRootFolderAsync()

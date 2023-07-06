@@ -8,7 +8,7 @@ builder.Services.AddDbContext<FoldersContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IFolderService, FolderService>();
 builder.Services.AddControllersWithViews();
 

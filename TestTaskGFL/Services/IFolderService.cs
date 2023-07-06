@@ -4,6 +4,7 @@ namespace TestTaskGFL.Services
 {
     public interface IFolderService
     {
+        Task<IEnumerable<Folder>> GetFoldersAsync(int? parentFolderId = null);
         Task<Folder?> GetRootFolderAsync();
         Task<IEnumerable<Folder>> GetRootFoldersAsync();
         Task<Folder?> GetFolderByIdAsync(int folderId);

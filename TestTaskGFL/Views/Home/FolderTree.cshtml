@@ -15,5 +15,7 @@
 <h3>Import from json file to @Model.FolderName</h3>
 <form id="importForm" method="post" enctype="multipart/form-data" action=@Url.Action("ImportCatalog", "Home", new { parentFolderId = Model.FolderId})>
   <input type="file" name="fileInput" accept=".json">
-  <input type="submit" value="Імпортувати">
+  <input type="submit" value="Import">
 </form>
+<br/>
+<a href="@Url.Action("ExportCatalog", "Home", new { parentFolderId = Model.FolderId})">Export structure of catalogs from the @Model.FolderName</a>
