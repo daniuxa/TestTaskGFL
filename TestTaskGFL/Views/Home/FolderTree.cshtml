@@ -12,3 +12,8 @@
     </li>
 }
 </ul>
+<h3>Import from json file to @Model.FolderName</h3>
+<form id="importForm" method="post" enctype="multipart/form-data" action=@Url.Action("ImportCatalog", "Home", new { parentFolderId = Model.FolderId})>
+  <input type="file" name="fileInput" accept=".json">
+  <input type="submit" value="Імпортувати">
+</form>

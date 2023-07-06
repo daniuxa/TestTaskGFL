@@ -7,5 +7,8 @@ namespace TestTaskGFL.Services
         Task<Folder?> GetRootFolderAsync();
         Task<IEnumerable<Folder>> GetRootFoldersAsync();
         Task<Folder?> GetFolderByIdAsync(int folderId);
+        Task<Folder> AddFolderAsync(Folder folder);
+        Task AddFolderRangeAsync(IEnumerable<Folder> folders, int? parentFolderId);
+        Task SaveChangesAsync();
     }
 }

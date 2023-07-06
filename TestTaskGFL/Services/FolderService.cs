@@ -13,6 +13,31 @@ namespace TestTaskGFL.Services
             _foldersContext = foldersContext;
         }
 
+        public async Task<Folder> AddFolderAsync(Folder folder)
+        {
+            await _foldersContext.Folders.AddAsync(folder);
+            return folder;
+        }
+
+        public async Task AddFolderRangeAsync(IEnumerable<Folder> folders, int? parentFolderId = null)
+        {
+            if (parentFolderId == null)
+            {
+                await _foldersContext.Folders.AddRangeAsync(folders);
+                return;
+            }
+
+            foreach (var item in folders)
+            {
+                if (item.ParentFolderId == null)
+                {
+                    await _foldersContext.Folders.AddAsync(
+                        new Folder { FolderId = item.FolderId, FolderName = item.FolderName, ParentFolderId = parentFolderId});
+                }
+            }
+            return;
+        }
+
         public async Task<Folder?> GetFolderByIdAsync(int folderId)
         {
             Folder? folder = await _foldersContext.Folders.Include(x => x.ChildFolderes).Where(x => x.FolderId == folderId).FirstOrDefaultAsync();
@@ -28,6 +53,25 @@ namespace TestTaskGFL.Services
         public async Task<IEnumerable<Folder>> GetRootFoldersAsync()
         {
             return await _foldersContext.Folders.Where(x => x.ParentFolder == null).ToListAsync();
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            using (var transaction = _foldersContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    _foldersContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Folders ON");
+                    await _foldersContext.SaveChangesAsync();
+                    _foldersContext.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Folders OFF");
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    throw; // Rethrow the exception for error handling/logging
+                }
+            }
         }
     }
 }
