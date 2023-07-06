@@ -14,9 +14,9 @@
 </ul>
 
 <h3>Import from json file to root</h3>
-<form id="importForm" method="post" enctype="multipart/form-data" action=@Url.Action("ImportCatalog", "Home")>
+<form id="importForm" method="post" enctype="multipart/form-data" action=@Url.Action("ImportFolders", "Home")>
   <input type="file" name="fileInput" accept=".json">
   <input type="submit" value="Import">
 </form>
 <br/>
-<a href="@Url.Action("ExportCatalog", "Home")">Export structure of catalogs from the root</a>
+<a href="@Url.Action("ExportFolders", "Home")">Export structure of catalogs from the root</a>

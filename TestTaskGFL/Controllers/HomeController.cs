@@ -12,38 +12,46 @@ namespace TestTaskGFL.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        //Folder service
         private readonly IFolderService _folderService;
+        //Auto mapper
         private readonly IMapper _mapper;
 
-        public HomeController(ILogger<HomeController> logger, IFolderService folderService, IMapper mapper)
+        public HomeController(IFolderService folderService, IMapper mapper)
         {
-            _logger = logger;
             _folderService = folderService;
             _mapper = mapper;
         }
+
+        //Start up
         [HttpGet]
         public async Task<IActionResult> IndexAsync()
         {
             return View(await _folderService.GetRootFoldersAsync());
         }
+
+        //Get a tree of structure of folders
         [HttpGet]
-        public async Task<IActionResult> FolderTreeAsync(int folderId = -1)
+        public async Task<IActionResult> FolderTreeAsync(int folderId)
         {
-            if (folderId == -1)
-            {
-                return View(await _folderService.GetRootFolderAsync());
-            }
             return View(await _folderService.GetFolderByIdAsync(folderId));
         }
+
+        //Import folders from the jsom file,
+        //fileInput - json file, where we get structure of folders
+        //parentFolderId - can be imported in specific folder
+        //if parentFolderId == null, import into the root
         [HttpPost]
-        public async Task<IActionResult> ImportCatalogAsync(IFormFile fileInput, int? parentFolderId = null)
+        public async Task<IActionResult> ImportFoldersAsync(IFormFile fileInput, int? parentFolderId = null)
         {
             IEnumerable<Folder> folders;
+
             if (fileInput == null || fileInput.Length == 0)
             {
                 return BadRequest("No file was selected.");
             }
+
+            //Reading the file stream
             using (var reader = new StreamReader(fileInput.OpenReadStream()))
             {
                 try
@@ -56,16 +64,24 @@ namespace TestTaskGFL.Controllers
                     return BadRequest(ex.Message);
                 }
             }
+
+            //if folder is empty
             if (folders == null)
             {
                 return NoContent();
             }
+
+            //Add folders and save changes
             await _folderService.AddFolderRangeAsync(folders, parentFolderId);
             await _folderService.SaveChangesAsync();
             return NoContent();
             //return Json(new { folders });
         }
-        public async Task<IActionResult> ExportCatalogAsync(int? parentFolderId = null)
+
+        //Export folders from the database to the json file
+        //parentFolderId - folder from which we export structure
+        //if parentFolderId == null, export from the root
+        public async Task<IActionResult> ExportFoldersAsync(int? parentFolderId = null)
         {
             IEnumerable<Folder> folders = await _folderService.GetFoldersAsync(parentFolderId);
             string json = JsonConvert.SerializeObject(_mapper.Map<IEnumerable<FolderDTO>>(folders), Formatting.Indented);

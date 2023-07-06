@@ -4,17 +4,20 @@ using TestTaskGFL.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//Add db context
 builder.Services.AddDbContext<FoldersContext>(options =>
 {
+    //Configure connection to the database with connection string from appsettings.json
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+//Add automapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+//Add folder service
 builder.Services.AddScoped<IFolderService, FolderService>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
